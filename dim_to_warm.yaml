@@ -198,6 +198,10 @@ conditions:
   # The triggering light must be on
   - condition: template
     value_template: "{{ is_state(changed_light, 'on') }}"
+  
+  # Only apply in white (color temperature) mode, not RGB/HS/XY
+  - condition: template
+    value_template: "{{ state_attr(changed_light, 'color_mode') == 'color_temp' }}"
 
   # Check if we should apply on turn-on events
   - condition: or
