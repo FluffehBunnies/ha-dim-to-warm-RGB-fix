@@ -50,6 +50,7 @@ blueprint:
           default: 2000
           selector:
             color_temp:
+              step: 50
               unit: kelvin
               min: 1600
               max: 6500
@@ -62,6 +63,7 @@ blueprint:
           default: 3200
           selector:
             color_temp:
+              step: 50
               unit: kelvin
               min: 1600
               max: 6500
@@ -120,7 +122,7 @@ blueprint:
             number:
               min: 0
               max: 10
-              step: 0.5
+              step: 0.1
               unit_of_measurement: "s"
               mode: slider
 
