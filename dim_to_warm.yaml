@@ -47,26 +47,24 @@ blueprint:
           description: >
             Lowest color temperature. Used when brightness
             is at or below the lower zone.
-          default: 2000
+          default: 2500
           selector:
             color_temp:
               unit: kelvin
-              min: 1600
+              min: 1800
               max: 6500
-              step: 50
 
         max_kelvin:
           name: "Max Kelvin (coolest)"
           description: >
             Highest color temperature. Used when brightness
             is at or above the upper zone.
-          default: 3200
+          default: 4000
           selector:
             color_temp:
               unit: kelvin
-              min: 1600
+              min: 1800
               max: 6500
-              step: 50
 
     # ── Zones ────────────────────────────────────────────────
     zone_section:
@@ -122,7 +120,7 @@ blueprint:
             number:
               min: 0
               max: 10
-              step: 0.1
+              step: 0.5
               unit_of_measurement: "s"
               mode: slider
 
@@ -173,9 +171,19 @@ variables:
   current_kelvin: >
     {{ state_attr(changed_light, 'color_temp_kelvin') | default(0) | float(0) }}
 
-  # Only update if difference > 25K (prevents loops)
+  # Update unless the light is already within 2 mireds of the target.
+  # Mireds (1e6 / Kelvin) match how lights quantize color temperature:
+  # 25 K is only ~2 mireds near 4000 K, but ~8 mireds near 1800 K, so a
+  # fixed Kelvin gap gives up early at warm temperatures. Two mireds is
+  # about one device step at every Kelvin, which blocks rounding loops.
   should_update: >
-    {{ (target_kelvin | float(0) - current_kelvin | float(0)) | abs > 25 }}
+    {% set target = target_kelvin | float(0) %}
+    {% set current = current_kelvin | float(0) %}
+    {% if target <= 0 or current <= 0 %}
+      true
+    {% else %}
+      {{ ((1000000 / target) - (1000000 / current)) | abs > 2 }}
+    {% endif %}
 
 # ═══════════════════════════════════════════════════════════════
 #  Triggers
@@ -200,7 +208,7 @@ conditions:
   # The triggering light must be on
   - condition: template
     value_template: "{{ is_state(changed_light, 'on') }}"
-  
+
   # Only apply in white (color temperature) mode, not RGB/HS/XY
   - condition: template
     value_template: "{{ state_attr(changed_light, 'color_mode') == 'color_temp' }}"
