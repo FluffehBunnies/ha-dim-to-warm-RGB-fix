@@ -285,5 +285,4 @@ actions:
       entity_id: "{{ changed_light }}"
     data:
       color_temp_kelvin: "{{ target_kelvin | int }}"
-      brightness: "{{ state_attr(changed_light, 'brightness') | int }}"
       transition: 0
