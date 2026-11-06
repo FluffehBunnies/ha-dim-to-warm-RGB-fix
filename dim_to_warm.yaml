@@ -50,10 +50,10 @@ blueprint:
           default: 2000
           selector:
             color_temp:
-              step: 50
               unit: kelvin
               min: 1600
               max: 6500
+              step: 50
 
         max_kelvin:
           name: "Max Kelvin (coolest)"
@@ -63,10 +63,10 @@ blueprint:
           default: 3200
           selector:
             color_temp:
-              step: 50
               unit: kelvin
               min: 1600
               max: 6500
+              step: 50
 
     # ── Zones ────────────────────────────────────────────────
     zone_section:
