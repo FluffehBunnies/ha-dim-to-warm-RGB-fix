@@ -273,9 +273,9 @@ actions:
       entity_id: "{{ changed_light }}"
     data:
       rgb_color:
-        - "{{ target_rgb.split(',')[0] | int }}"
-        - "{{ target_rgb.split(',')[1] | int }}"
-        - "{{ target_rgb.split(',')[2] | int }}"
+        - "{{ target_rgb[0] | int }}"
+        - "{{ target_rgb[1] | int }}"
+        - "{{ target_rgb[2] | int }}"
       brightness: "{{ state_attr(changed_light, 'brightness') | int }}"
       transition: 0
   - delay:
