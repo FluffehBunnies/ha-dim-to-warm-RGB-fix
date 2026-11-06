@@ -47,11 +47,11 @@ blueprint:
           description: >
             Lowest color temperature. Used when brightness
             is at or below the lower zone.
-          default: 2500
+          default: 2000
           selector:
             color_temp:
               unit: kelvin
-              min: 1800
+              min: 1600
               max: 6500
 
         max_kelvin:
@@ -59,11 +59,11 @@ blueprint:
           description: >
             Highest color temperature. Used when brightness
             is at or above the upper zone.
-          default: 4000
+          default: 3200
           selector:
             color_temp:
               unit: kelvin
-              min: 1800
+              min: 1600
               max: 6500
 
     # ── Zones ────────────────────────────────────────────────
