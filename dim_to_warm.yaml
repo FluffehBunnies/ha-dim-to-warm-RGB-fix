@@ -175,33 +175,6 @@ variables:
   should_update: >
     {{ (target_kelvin | float(0) - current_kelvin | float(0)) | abs > 25 }}
 
-  # RGB equivalent of the target Kelvin (same formula Home Assistant uses).
-  # A round-trip through this color forces bulbs that ignore a small
-  # color_temp step to apply the temperature on the way back.
-  target_rgb: >
-    {% set kelvin = target_kelvin | float(2500) %}
-    {% if kelvin < 1000 %}{% set kelvin = 1000 %}{% endif %}
-    {% if kelvin > 40000 %}{% set kelvin = 40000 %}{% endif %}
-    {% set t = kelvin / 100 %}
-    {% if t <= 66 %}
-      {% set r = 255 %}
-      {% set g = (99.4708025861 * log(t) - 161.1195681661) | round(0) | int %}
-    {% else %}
-      {% set r = (329.698727446 * ((t - 60) ** -0.1332047592)) | round(0) | int %}
-      {% set g = (288.1221695283 * ((t - 60) ** -0.0755148492)) | round(0) | int %}
-    {% endif %}
-    {% if t >= 66 %}
-      {% set b = 255 %}
-    {% elif t <= 19 %}
-      {% set b = 0 %}
-    {% else %}
-      {% set b = (138.5177312231 * log(t - 10) - 305.0447927307) | round(0) | int %}
-    {% endif %}
-    {% set r = [[r, 0] | max, 255] | min %}
-    {% set g = [[g, 0] | max, 255] | min %}
-    {% set b = [[b, 0] | max, 255] | min %}
-    {{ r | int }},{{ g | int }},{{ b | int }}
-
 # ═══════════════════════════════════════════════════════════════
 #  Triggers
 # ═══════════════════════════════════════════════════════════════
@@ -264,25 +237,3 @@ actions:
     data:
       color_temp_kelvin: "{{ target_kelvin | int }}"
       transition: "{{ v_transition | float(0.5) }}"
-
-  # Leave white mode and come back so the bulb applies the Kelvin step
-  - delay:
-      milliseconds: 200
-  - action: light.turn_on
-    target:
-      entity_id: "{{ changed_light }}"
-    data:
-      rgb_color:
-        - "{{ target_rgb[0] | int }}"
-        - "{{ target_rgb[1] | int }}"
-        - "{{ target_rgb[2] | int }}"
-      brightness: "{{ state_attr(changed_light, 'brightness') | int }}"
-      transition: 0
-  - delay:
-      milliseconds: 200
-  - action: light.turn_on
-    target:
-      entity_id: "{{ changed_light }}"
-    data:
-      color_temp_kelvin: "{{ target_kelvin | int }}"
-      transition: 0
