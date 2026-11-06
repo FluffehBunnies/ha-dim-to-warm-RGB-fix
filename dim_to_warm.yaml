@@ -21,7 +21,7 @@ blueprint:
 
   domain: automation
   author: "robblids"
-  source_url: "https://github.com/robblids/ha-dim-to-warm/blob/main/dim_to_warm.yaml"
+  source_url: "https://github.com/FluffehBunnies/ha-dim-to-warm-RGB-fix/edit/main/dim_to_warm.yaml"
   homeassistant:
     min_version: "2024.6.0"
   input:
